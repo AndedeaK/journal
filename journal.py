@@ -9,7 +9,9 @@ write freely as this is an unstructured journal."""
 # import libraries
 from argparse import ArgumentParser
 from datetime import date
+import sys
 
+# Today's date
 date = date.today()
 
 parser = ArgumentParser("A Command line journal")
@@ -17,16 +19,23 @@ parser.add_argument("-n", "--new", help="Make a new journal entry", action="stor
 parser.add_argument("-v", "--view", help="To view your journal entries", action="store_true")
 args = parser.parse_args()
 
+def main():
+    # Add some error checking on the command line
+    if len(sys.argv) < 2:
+        sys.exit("Too few arguments. Type -h or --help for assistance")
 
-if args.new:
-    entry = input("Feel free to make your entry: ")
-    with open("journal.txt", "a") as file:
-        file.write(f"{date}\nDear journal\n{entry}\n")
-elif args.view:
-    with open("journal.txt", "r") as file:
-        for line in file:
-            print(line.rstrip())
-    
+    # Parse the command-line    
+    if args.new:
+        entry = input("Feel free to make your entry: ")
+        with open("journal.txt", "a") as file:
+            file.write(f"{date}\nDear journal\n{entry}\n")
+    elif args.view:
+        with open("journal.txt", "r") as file:
+            for line in file:
+                print(line.rstrip())
+
+if __name__=="__main__":
+    main()    
 
 
 # Create the apps help menu with -h
