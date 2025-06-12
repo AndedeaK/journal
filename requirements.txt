@@ -1,0 +1,5 @@
+mypy
+pytest
+cowsay
+pyttsx3
+emoji

@@ -1,0 +1,17 @@
+import pytest
+
+from journal import make_entry, check_cmdline, view_entry
+
+def test_check_cmdline():
+	with pytest.raises(SystemExit):
+		check_cmdline()
+
+def test_make_entry():
+	with pytest.raises(TypeError):
+		make_entry(1)
+	with pytest.raises(ValueError):
+		make_entry("123456789")
+
+def test_view_entry():
+	with pytest.raises(FileNotFoundError):
+		view_entry("page.txt")
