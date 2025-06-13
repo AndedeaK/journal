@@ -27,6 +27,8 @@ args = parser.parse_args()
 date = date.today()
 engine = pyttsx3.init()
 
+# Reused message
+message1 = "Feel free to make your entry: " 
 
 def main():
     # Further assist the user on the commandline
@@ -38,31 +40,23 @@ def main():
 
     # Execute the user's disire
     try:
-        if args.new:
-            message1 = "Feel free to make your entry: "
-            feedback = make_entry(input(message1))
-            cowsay.cow(feedback)
-            engine.say(feedback)
-            engine.runAndWait()
-        elif args.view:
-            message2 = "Here's your entries."
-            cowsay.cow(message2)
-            engine.say(message2)
-            engine.runAndWait()
+        if args.new:                       
+            interact(make_entry(input(message1)))           
+        if args.view:            
+            interact1("Here's your entries.")            
             file_path = "journal.txt"
             view_entry(file_path)
-            answer = input("Do you wish to make a new entry? yes/y or no/n?\n")
+            answer = input("Do you wish to make a new entry? yes/y or no/n? ")
             if answer == "yes" or answer == "y":
-                feedback = make_entry(input(message1))
-                print(feedback)
-            else:
+                interact(make_entry(input(message1)))                              
+            elif answer == "no" or answer == "n":
                 sys.exit(
                     emoji.emojize(
-                        "Goodbye. :smiley:", language="alias", variant="emoji_type"
+                        "Ok. Goodbye. :smiley:", language="alias", variant="emoji_type"
                     )
-                )
-        else:
-            ...#TODO: Exit after a certain time has passed and no decision made
+                )        
+            else:
+                sys.exit("Invalid input.")
     except EOFError:
         print(
             emoji.emojize(
@@ -100,6 +94,38 @@ def greet(message: str) -> None:
     engine.runAndWait()
     engine.stop()
 
+def interact(feedback: str) -> None:
+    """
+    Interacts with the user when they have made a new entry
+
+    :param message: message to update the user after making a new entry.
+    :type entry: str
+    :raise TypeError: if message is not a str
+    :return: Nothing to be returned.
+    """
+     
+    if  isinstance(feedback, int) == True:
+        raise TypeError("Message must be a str.")
+    cowsay.cow(feedback)
+    engine.say(feedback)
+    engine.runAndWait()
+    engine.stop()
+
+def interact1(message2: str) -> None:
+    """
+    Interacts with the user when they choose to view journal entries
+
+    :param message: message to update the user on what they are viewing.
+    :type entry: str
+    :raise TypeError: if message is not a str
+    :return: Nothing to be returned.
+    """
+    if isinstance(message2, int) == True:
+        raise TypeError("Message must be a str.")
+    cowsay.cow(message2)
+    engine.say(message2)
+    engine.runAndWait()
+    engine.stop()
 
 def make_entry(entry: str) -> str:
     """
