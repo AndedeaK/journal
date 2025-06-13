@@ -31,31 +31,46 @@ engine = pyttsx3.init()
 def main():
     # Further assist the user on the commandline
     check_cmdline()
-    cowsay.cow("Welcome to your journal.")
-    engine.say("Welcome to your journal.")
-    engine.runAndWait()
-    engine.stop()
-    # Execute the user's disire
-    if args.new:        
-        feedback = make_entry(input("Feel free to make your entry: "))
-        cowsay.cow(feedback)
-        engine.say(feedback)
-        engine.runAndWait()
-    elif args.view:
-        cowsay.cow("Here is your entries.")
-        engine.say("Here's your entries")
-        engine.runAndWait()
-        file_path = "journal.txt"
-        view_entry(file_path)
-        answer = input("Do you wish to make a new entry? yes/y or no/n? ")
-        if answer == "yes" or answer == "y":
-            feedback = make_entry(input("Feel free to make your entry: "))
-            print(feedback)
-        else:
-            sys.exit(emoji.emojize("Goodbye. :smiley:", language='alias', variant='emoji_type'))
-                  
 
-        
+    # A welcome messge to the user
+    message = "Welcome to your journal"
+    greet(message)
+
+    # Execute the user's disire
+    try:
+        if args.new:
+            message1 = "Feel free to make your entry: "
+            feedback = make_entry(input(message1))
+            cowsay.cow(feedback)
+            engine.say(feedback)
+            engine.runAndWait()
+        elif args.view:
+            message2 = "Here's your entries."
+            cowsay.cow(message2)
+            engine.say(message2)
+            engine.runAndWait()
+            file_path = "journal.txt"
+            view_entry(file_path)
+            answer = input("Do you wish to make a new entry? yes/y or no/n?\n")
+            if answer == "yes" or answer == "y":
+                feedback = make_entry(input(message1))
+                print(feedback)
+            else:
+                sys.exit(
+                    emoji.emojize(
+                        "Goodbye. :smiley:", language="alias", variant="emoji_type"
+                    )
+                )
+        else:
+            ...#TODO: Exit after a certain time has passed and no decision made
+    except EOFError:
+        print(
+            emoji.emojize(
+                "Ctrl+D pressed. Goodbye. :smiley:",
+                language="alias",
+                variant="emoji_type",
+            )
+        )
 
 
 def check_cmdline():
@@ -69,10 +84,27 @@ def check_cmdline():
         sys.exit("Too few arguments. Type{python3 journal.py -h] for help}")
 
 
+def greet(message: str) -> None:
+    """
+    Greets the user
+
+    :param message: message to greet the user.
+    :type entry: str
+    :raise TypeError: if message is not a str
+    :return: Nothing to be returned.
+    """
+    if isinstance(message, int) == True:
+        raise TypeError("Message must be a str.")
+    cowsay.cow(message)
+    engine.say(message)
+    engine.runAndWait()
+    engine.stop()
+
+
 def make_entry(entry: str) -> str:
     """
     Enters the entry into the journal.
-    
+
     :param entry: Entry to be entered into the journal.
     :type entry: str
     :raise TypeError: if entry is not a str
@@ -84,28 +116,26 @@ def make_entry(entry: str) -> str:
         raise TypeError("Your entry must be a str.")
     if entry.isdigit():
         raise ValueError("Those are only digits.")
-    else:
-        with open("journal.txt", "a") as file:
-            file.write(f"{date}\nDear journal\n{entry}\n")
-
+    with open("journal.txt", "a") as file:
+        file.write(f"{date}\nDear journal\n{entry}\n")
     return emoji.emojize("Your entry as been entered successfully. :thumbs_up:")
 
-def view_entry(file_path) -> None:
+
+def view_entry(file_path: str) -> None:
     """
     Allows the user to view entries made.
 
     :param file_path: path to file to be opened
-    :type file_path: .txt file
-    :raise FileNotFoundError: if "journal.txt" does not exist.    
-    :return: None    
+    :type file_path: path to a .txt file
+    :raise FileNotFoundError: if "journal.txt" does not exist.
+    :return: None
     """
     if not file_path:
         raise FileNotFoundError
-    else:
-        with open(file_path, "r") as file:
-            for line in file:
-                print(line.rstrip())
-    
+    with open(file_path, "r") as file:
+        for line in file:
+            print(line.rstrip())
+
 
 if __name__ == "__main__":
     main()
